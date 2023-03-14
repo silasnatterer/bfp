@@ -101,6 +101,11 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+.sconsign.dblite
+.sconf_temp
+*/build_release/*
+*/build_debug/*
+
 # Environments
 .env
 .venv

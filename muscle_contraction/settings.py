@@ -1,153 +1,229 @@
-scenario = "muscle_contraction"
+import sys
+import os
+import itertools
+import importlib
 
-# Create Meshes
-nx, ny, nz = 12, 4, 4
-mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # Quadratic basis functions
-meshes = {
-    "3Dmesh": {
-        "nElements":            [nx, ny, nz],       # Number of elements in x, y and z direction
-        "physicalExtent":       [nx, ny, nz],       # Extent of the mesh in [m]
-        "physicalOffset":       [0.0, 0.0, 0.0],    # Offset of the mesh in [m]
-        "inputMeshIsGlobal":    True                # whether values describe global domain or local subdomain
-    }
-}
+# parse arguments
+rank_no = (int)(sys.argv[-2])
+n_ranks = (int)(sys.argv[-1])
+var_file = sys.argv[0] if ".py" in sys.argv[0] else "variables.py"
 
-# Create Solvers
-solvers = {
-    "nonlinear": {
-        "relativeTolerance":            1e-10,      # 1e-10 relative tolerance of the linear solver
-        "absoluteTolerance":            1e-10,      # 1e-10 absolute tolerance of the residual of the linear solver
-        "solverType":                   "preonly",  # type of the linear solver
-        "preconditionerType":           "lu",       # type of the preconditioner
-        "maxIterations":                1e4,        # maximum number of iterations in the linear solver
-        "snesMaxFunctionEvaluations":   1e8,        # maximum number of function iterations
-        "snesMaxIterations":            10,         # maximum number of iterations in the nonlinear solver
-        "snesRelativeTolerance":        1e-5,       # relative tolerance of the nonlinear solver
-        "snesLineSearchType":           "l2",       # type of linesearch, possible values: "bt" "nleqerr" "basic" "l2" "cp" "ncglinear"
-        "snesAbsoluteTolerance":        1e-5,       # absolute tolerance of the nonlinear solver
-        "snesRebuildJacobianFrequency": 10,         # how often the jacobian should be recomputed
-        "dumpFilename":                 "",         # filename of vector and matrix dump, "" means disabled
-        "dumpFormat":                   "matlab",   # format of vector and matrix dump
-    }
-}
+# add folders to python path
+script_path = os.path.dirname(os.path.abspath(__file__))
+var_path = os.path.join(script_path, "variables")
+sys.path.insert(0, script_path)
+sys.path.insert(0, var_path)
 
-# Material parameters
-c1 = 3.176e-10              # [N/cm^2]
-c2 = 1.813                  # [N/cm^2]
-b  = 1.075e-2               # [N/cm^2] anisotropy parameter
-d  = 9.1733                 # [-] anisotropy parameter
-material = [c1, c2, b, d]   # material parameters
-pmax = 7.3                  # [N/cm^2] maximum isometric active stress
-density = 1.0
+# load variables file
+var_module, _ = os.path.splitext(var_file)
+variables = importlib.import_module(var_module, package=var_file)
 
-# Dirichlet boundary condition
-dirichlet = {}
-for k in range(mz):
-  for j in range(my):
-    dirichlet[k*mx*my + j*mx] = [0.0, 0.0, 0.0, None, None, None]   # Fix x=0
-
-# Neumann boundary condition
-neumann = []
-force = 25
-for k in range(nz):
-    for j in range(ny):
-        neumann += [{"element": k*nx*ny + j*nx + nx-1, "constantVector": [force,0,0], "face": "0+"}]    # Force at x=nx-1
-
-# Initial conditions
-initDisplacement = [[0.0, 0.0, 0.0] for _ in range(mx*my*mz)]   # No initial displacement
-initVelocity = [[0.0, 0.0, 0.0] for _ in range(mx*my*mz)]       # No initial velocity
-constantForce = (0.0, 0.0, 0.0)                                 # No constant force
-
-# Time stepping parameters
-timesteps = 250
-dt = 0.5
-output_interval = dt
-
-# Create config
+# define config
 config = {
-  "scenarioName": scenario,                                             # specifier to find simulation run in log file
-  "logFormat": "csv",                                                   # "csv" or "json", format of the lines in the log file, csv gives smaller files
-  "solverStructureDiagramFile": "solver_structure.txt",                 # output file of a diagram that shows data connection between solvers
-  "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
+  "scenarioName":                   variables.scenario_name,
 
-  "Meshes": meshes,     # Set meshes
-  "Solvers": solvers,   # Set solvers
+  "logFormat":                      "csv",
+  "mappingsBetweenMeshesLogFile":   "out/" + variables.scenario_name + "/mappings_between_meshes.txt",
+  "solverStructureDiagramFile":     "out/" + variables.scenario_name + "/solver_structure.txt",
+  
+  "Meshes":                         variables.meshes,
+  "MappingsBetweenMeshes":          variables.mappings_between_meshes,
 
-  "MuscleContractionSolver": {
-      "numberTimeSteps": timesteps,                         # number of timesteps per call
-      "timeStepOutputInterval": 100,                        # how often the current time step is displayed
-      "Pmax": pmax,                                         # maximum PK2 active stress
-      "enableForceLengthRelation": True,                    # set to false if force-length relation is already considered in CellML model
-      "lambdaDotScalingFactor": 1.0,                        # scaling factor of the lambda dot slot (contraction velocity)
-      "mapGeometryToMeshes": [],                            # the mesh names of the meshes that will get the geometry transferred
-      "slotNames": ["lambda", "ldot", "gamma", "T"],        # names of the connector slots
-      "dynamic": True,                                      # whether to use dynamic or static solver
+  "Solvers":                        variables.solvers,
 
-      # Output writer with all required fields
-      "OutputWriter": [
-          {"format": "Paraview", "outputInterval": int(1.0/dt*output_interval), "filename": "out/mechanics3D", "binary": True, "fixedFormat": False, "onlyNodalValues": True, "combineFiles": True, "fileNumbering": "incremental"}
-       ],
-    
-    "DynamicHyperelasticitySolver": {
-        "timeStepWidth": dt,                  # time step width 
-        "durationLogKey": "nonlinear",        # key to find duration of this solver in the log file
-        "timeStepOutputInterval": 1,          # how often the current time step should be printed to console
-    
-        "materialParameters": material,                     # material parameters of the Mooney-Rivlin material
-        "density": density,                                 # density of the material
-        "displacementsScalingFactor": 1.0,                  # scaling factor for displacements, only set to sth. other than 1 only to increase visual appearance for very small displacements
-        "residualNormLogFilename": "log_residual_norm.txt", # log file where residual norm values of the nonlinear solver will be written
-        "useAnalyticJacobian": True,                        # whether to use the analytically computed jacobian matrix in the nonlinear solver (fast)
-        "useNumericJacobian": False,                        # whether to use the numerically computed jacobian matrix in the nonlinear solver (slow)
-        "dumpDenseMatlabVariables": False,                  # whether to have extra output of matlab vectors, x,r, jacobian matrix (very slow)
-    
-        "meshName": "3Dmesh",                   # Selected mesh
-        "inputMeshIsGlobal": True,              # whether boundary conditions are specified locally or globally
-        "fiberMeshNames": [],                   # fiber meshes that will be used to determine the fiber direction
-        "fiberDirection": [0, 0, 0],            # if fiberMeshNames is empty, directly set the constant fiber direction
-        "fiberDirectionInElement": [0, 0, 1],   # direction of fiber in element
-        "solverName": "nonlinear",              # Selected solver
-        "loadFactors": [],                      # no load factors, solve problem directly
-        "loadFactorGiveUpThreshold": 0.1,       # if the adaptive time stepping produces a load factor smaller than this value, the solution will be accepted for the current timestep
-        "nNonlinearSolveCalls": 1,              # how often the nonlinear solve should be called
-    
-        "dirichletBoundaryConditions": dirichlet,                           # the initial Dirichlet boundary conditions that define values for displacements u and velocity v
-        "dirichletOutputFilename": "out/dirichlet_boundary_conditions",     # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-        "neumannBoundaryConditions": neumann,                               # Neumann boundary conditions that define traction forces on surfaces of elements
-        "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values should be scaled by the surface area of all elements where Neumann BC are applied
-        "constantBodyForce": constantForce,                                 # a constant force that acts on the whole body, e.g gravity
-        "initialValuesDisplacements": initDisplacement,                     # initial values for the displacement
-        "initialValuesVelocities": initVelocity,                            # initial values for the velocity 
-        "extrapolateInitialGuess": True,                                    # if the initial values for the dynamic nonlinear problem should be computed by extrapolating
-    
-        "totalForceLogFilename":  "out/total_force.csv",    # filename of a log file that will contain the total (bearing) forces and moments at the top and bottom of the volume
-        "totalForceLogOutputInterval": 10,                  # output interval when to write the totalForceLog file
+  "Coupling": {
+    "timeStepWidth":            variables.dt_3D,
+    "logTimeStepWidthAsKey":    "dt_3D",
+    "durationLogKey":           "duration_3D",
+    "timeStepOutputInterval":   1,
+    "endTime":                  variables.end_time,
+    "connectedSlotsTerm1To2":   {1:2},  # transfer gamma to MuscleContractionSolver
+    "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
-        # Define which file formats should be written
-        # 1. main output writer that writes output files using the quadratic elements function space. Writes displacements, velocities and PK2 stresses.
-        "OutputWriter" : [
-            # Paraview files
-            #{"format": "Paraview", "outputInterval": 1, "filename": "out/u", "binary": False, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-        ],
-        # 2. additional output writer that writes also the hydrostatic pressure
-        "pressure": {   # output files for pressure function space (linear elements), contains pressure values, as well as displacements and velocities
-            "OutputWriter" : [
-                #{"format": "Paraview", "outputInterval": 1, "filename": "out/p", "binary": False, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-            ]
-        },
-        # 3. additional output writer that writes virtual work terms
-        "dynamic": {    # output of the dynamic solver, has additional virtual work values
-            "OutputWriter" : [   # output files for displacements function space (quadratic elements)
-            #{"format": "Paraview", "outputInterval": int(output_interval/dt), "filename": "out/dynamic", "binary": False, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-            #{"format": "Paraview", "outputInterval": 1, "filename": "out/dynamic", "binary": False, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-            ],
-        },
-        # 4. output writer for debugging, outputs files after each load increment, the geometry is not changed but u and v are written
-        "LoadIncrements": {
-            "OutputWriter" : [
-                #{"format": "Paraview", "outputInterval": 1, "filename": "out/load_increments", "binary": False, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-            ]
+    "Term1": { # fibers (FastMonodomainSolver)
+      "MultipleInstances": { # subdomains
+        "logKey":                       "duration_subdomains_xy",
+        "ranksAllComputedInstances":    list(range(n_ranks)),
+        "nInstances":                   variables.n_subdomains_x * variables.n_subdomains_y,
+        "instances": [{
+          "ranks": list(range(subdomain_y*variables.n_subdomains_x + subdomain_x, n_ranks, variables.n_subdomains_x*variables.n_subdomains_y)),
+
+          "StrangSplitting": {
+            "timeStepWidth":            variables.dt_splitting,
+            "logTimeStepWidthAsKey":    "dt_splitting",
+            "durationLogKey":           "duration_splitting",
+            "timeStepOutputInterval":   100,
+            "endTime":                  variables.dt_splitting,
+            "connectedSlotsTerm1To2":   None,
+            "connectedSlotsTerm2To1":   None,
+
+            "Term1": { # reaction term
+              "MultipleInstances": {
+                "logKey":       "duration_subdomains_z",
+                "nInstances":   variables.n_fibers_in_subdomain_x(subdomain_x) * variables.n_fibers_in_subdomain_y(subdomain_y),
+                "instances": [{
+                  "ranks": list(range(variables.n_subdomains_z)),
+
+                  "Heun": {
+                    "timeStepWidth":            variables.dt_0D,
+                    "logTimeStepWidthAsKey":    "dt_0D",
+                    "durationLogKey":           "duration_0D",
+
+                    "timeStepOutputInterval":       1e4,
+                    "initialValues":                [],
+                    "dirichletBoundaryConditions":  {},
+                    "dirichletOutputFilename":      None,
+                    "inputMeshIsGlobal":            True,
+                    "checkForNanInf":               True,
+                    "nAdditionalFieldVariables":    0,
+                    "additionalSlotNames":          [],
+                    "OutputWriter":                 [],
+
+                    "CellML": { # hodgkin-huxley-razumova cellml
+                      "modelFilename": variables.input_dir + "hodgkin_huxley-razumova.cellml",
+
+                      "statesInitialValues":                        [],
+                      "initializeStatesToEquilibrium":              False,
+                      "initializeStatesToEquilibriumTimeStepWidth": 1e-4,
+                      "optimizationType":                           "vc",
+                      "approximateExponentialFunction":             True,
+                      "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
+                      "maximumNumberOfThreads":                     0,
+
+                      "setSpecificStatesFunction":              None,
+                      "setSpecificStatesCallInterval":          0,
+                      "setSpecificStatesCallFrequency":         variables.get_specific_states_call_frequency(variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)),
+                      "setSpecificStatesFrequencyJitter":       variables.get_specific_states_frequency_jitter(variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)),
+                      "setSpecificStatesCallEnableBegin":       variables.get_specific_states_call_enable_begin(variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)),
+                      "setSpecificStatesRepeatAfterFirstCall":  0.01,
+                      "additionalArgument":                     variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y),
+
+                      "mappings": {
+                        ("parameter", 0):               "membrane/i_Stim",
+                        ("parameter", 1):               "Razumova/l_hs",
+                        ("parameter", 2):               ("constant", "Razumova/rel_velo"),
+                        ("connectorSlot", "vm"):        "membrane/V",
+                        ("connectorSlot", "stress"):    "Razumova/activestress",
+                        ("connectorSlot", "alpha"):     "Razumova/activation",
+                        ("connectorSlot", "lambda"):    "Razumova/l_hs",
+                        ("connectorSlot", "ldot"):      "Razumova/rel_velo"
+                      },
+                      "parametersInitialValues": [0.0, 1.0, 0.0],
+
+                      "meshName":               variables.fiber_mesh_names[variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)],
+                      "stimulationLogFilename": "out/stimulation.log"
+                    },
+                  }
+                } for fiber_x, fiber_y in itertools.product(range(variables.n_fibers_in_subdomain_x(subdomain_x)), range(variables.n_fibers_in_subdomain_y(subdomain_y)))]
+              }
+            },
+
+            "Term2": { # diffusion term
+              "MultipleInstances": {
+                "nInstances": variables.n_fibers_in_subdomain_x(subdomain_x) * variables.n_fibers_in_subdomain_y(subdomain_y),
+                "instances": [{
+                  "ranks": list(range(variables.n_subdomains_z)),
+
+                  "ImplicitEuler": {
+                    "timeStepWidth":            variables.dt_1D,
+                    "logTimeStepWidthAsKey":    "dt_1D",
+                    "durationLogKey":           "duration_1D",
+
+                    "nAdditionalFieldVariables":    4,
+                    "additionalSlotNames":          ["stress", "alpha", "lambda", "ldot"],
+
+                    "solverName":                       variables.diffusion_solver_name,
+                    "timeStepOutputInterval":           1e4,
+                    "timeStepWidthRelativeTolerance":   1e-10,
+                    "dirichletBoundaryConditions":      {},
+                    "dirichletOutputFilename":          None,
+                    "inputMeshIsGlobal":                True,
+                    "checkForNanInf":                   True,
+                    "OutputWriter":                     [],
+
+                    "FiniteElementMethod": {
+                      "inputMeshIsGlobal":  True,
+                      "meshName":           variables.fiber_mesh_names[variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)],
+                      "solverName":         variables.diffusion_solver_name,
+                      "prefactor":          variables.get_diffusion_prefactor(variables.get_fiber_no(subdomain_x, subdomain_y, fiber_x, fiber_y)),
+                      "slotName":           "vm"
+                    }
+                  }
+                } for fiber_x, fiber_y in itertools.product(range(variables.n_fibers_in_subdomain_x(subdomain_x)), range(variables.n_fibers_in_subdomain_y(subdomain_y)))],
+
+                "OutputWriter": variables.output_writer_fibers
+              }
+            }
+          }
+        } for subdomain_x, subdomain_y in itertools.product(range(variables.n_subdomains_x), range(variables.n_subdomains_y))]
+      },
+
+      # settings for FastMonodomainSolver
+      "fiberDistributionFile":                              variables.fiber_distribution_file,
+      "firingTimesFile":                                    variables.firing_times_file,
+      "valueForStimulatedPoint":                            variables.vm_value_stimulated,
+      "onlyComputeIfHasBeenStimulated":                     True,
+      "disableComputationWhenStatesAreCloseToEquilibrium":  True,
+      "neuromuscularJunctionRelativeSize":                  0.1,
+      "generateGPUSource":                                  True,
+      "useSinglePrecision":                                 False
+    },
+
+    "Term2": { # solid mechanics (MuscleContractionSolver)
+      "MuscleContractionSolver": {
+        "numberTimeSteps":              1,
+        "timeStepOutputInterval":       100,
+        "Pmax":                         variables.pmax,
+        "enableForceLengthRelation":    True,
+        "lambdaDotScalingFactor":       1,
+        "dynamic":                      True,
+        "mapGeometryToMeshes":          [],
+        "slotNames":                    ["lambda", "ldot", "gamma", "T"],
+        "OutputWriter":                 variables.output_writer_mechanics,
+
+        "DynamicHyperelasticitySolver": { # actual 3D mechanics solver
+          "timeStepWidth":          variables.dt_3D,
+          "durationLogKey":         "mechanics",
+          "timeStepOutputInterval": 1,
+
+          "materialParameters":         variables.material_parameters,
+          "density":                    variables.rho,
+          "displacementsScalingFactor":  1.0,
+          "residualNormLogFilename":    "log_residual_norm.txt",
+          "useAnalyticJacobian":        True,
+          "useNumericJacobian":         False,
+          "dumpDenseMatlabVariables":   False,
+
+          "inputMeshIsGlobal":  True,
+          "meshName":           variables.mesh3D_name,
+          "fiberMeshNames":     variables.fiber_mesh_names,
+
+          "solverName":                 variables.mechanics_solver_name,
+          "loadFactorGiveUpThreshold":  1,
+          "loadFactors":                [],
+          "scaleInitialGuess":          False,
+          "nNonlinearSolveCalls":       1,
+
+          "dirichletBoundaryConditions":                            variables.dirichlet_bc,
+          "neumannBoundaryConditions":                              variables.neumann_bc,
+          "updateDirichletBoundaryConditionsFunction":              None,
+          "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
+          "divideNeumannBoundaryConditionValuesByTotalArea":        True,
+
+          "initialValuesDisplacements": variables.init_displacement,
+          "initialValuesVelocities":    variables.init_velocity,
+          "extrapolateInitialGuess":    True,
+          "constantBodyForce":          variables.constant_body_force,
+
+          "dirichletOutputFilename":    "out/" + variables.scenario_name + "/dirichlet_boundary_conditions",
+          "totalForceLogFilename":      "out/" + variables.scenario_name + "/total_force.txt",
+
+          "OutputWriter": [],
+          "pressure":       { "OutputWriter": [] },
+          "dynamic":        { "OutputWriter": [] },
+          "LoadIncrements": { "OutputWriter": [] }
         }
+      }
     }
   }
 }
