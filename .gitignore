@@ -105,6 +105,9 @@ celerybeat.pid
 .sconf_temp
 */build_release/*
 */build_debug/*
+solver_structure.txt
+mappings_between_meshes_log.txt
+log_residual_norm.txt
 
 # Environments
 .env
