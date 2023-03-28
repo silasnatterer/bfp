@@ -105,6 +105,7 @@ celerybeat.pid
 .sconf_temp
 */build_release/*
 */build_debug/*
+*precice-Participant*
 solver_structure.txt
 mappings_between_meshes_log.txt
 log_residual_norm.txt

@@ -6,7 +6,7 @@ rank_no = int(sys.argv[-2])
 n_ranks = int(sys.argv[-1])
 
 # Scenario name
-scenario_name = "muscle_contraction"
+scenario_name = "precice_contraction"
 input_dir = "../../../electrophysiology/input/"
 
 # Time stepping
