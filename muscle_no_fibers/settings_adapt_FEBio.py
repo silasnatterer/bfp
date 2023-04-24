@@ -4,24 +4,46 @@
 
 import numpy as np
 
-nx = 12
-ny = 4
-nz = 4
+#### set Dirichlet BC and Neumann BC for the free side of the muscle
 
-dirichlet_bc = {}
-for k in range(0, 2*nz + 1):
-  for j in range(0, 2*ny + 1):
-    dirichlet_bc[(k * (2*ny + 1) + j) * (2*nx + 1)] = [0, 0, 0, None, None, None]
+muscle_elements = [4, 4, 12] #linear elements
 
-neumann_bc = []
-for k in range(0, nz):
-  for j in range(0, ny):
-    neumann_bc.append({
-    "element": (k * ny + j) * nx + nx - 1,               # local element no, negative values count from the end
-    "face": "0+",               # face on which the neumann bc should act
-    "constantValue": 5,
-    "isInReferenceConfiguration": True,  # for dynamic hyperelasticity, if the traction is interpreted as specified in reference configuration or current configuration
-  })
+[nx, ny, nz] = [elem + 1 for elem in muscle_elements]
+[mx, my, mz] = [elem // 2 for elem in muscle_elements] # quadratic elements consist of 2 linear elements along each axis
+
+# fixed side of the muscle
+elasticity_dirichlet_bc = {}
+for k in range(1):
+  for j in range(ny):
+    for i in range(nx):
+      elasticity_dirichlet_bc[k*nx*ny + j*nx + i] = [0.0, 0.0, 0.0, None,None,None] # displacement ux uy uz, velocity vx vy vz
+
+#free side of the muscle (pulled by an exernal force)
+elasticity_neumann_bc = [{
+  "element": k*mx*my + j*mx + i,
+  "constantVector": [0,0,0],
+  "face": "2+",
+  "isInReferenceConfiguration": True
+  } for k in range(mz-1, mz) for j in range(my) for i in range(mx)]
+
+external_force = 5
+def update_neumann_bc(t):
+  factor = min(1.0, t/20.0) # at t=1.0 we have F = external_force
+  elasticity_neumann_bc = [{
+    "element": k*mx*my + j*mx + i,
+    "constantVector": [0, 0, external_force*factor], # force pointing to bottom
+    "face": "2+",
+    "isInReferenceConfiguration": True
+  } for k in range(mz-1, mz) for j in range(my) for i in range(mx)]
+
+  config = {
+    "inputMeshIsGlobal": True,
+    "divideNeumannBoundaryConditionValuesByTotalArea": True,
+    "neumannBoundaryConditions": elasticity_neumann_bc,
+  }
+
+  return config
+
 
 config = {
   "scenarioName":                   "muscle_no_fibers",    # scenario name for the log file
@@ -29,19 +51,19 @@ config = {
   "solverStructureDiagramFile":     "solver_structure.txt",     # output file of a diagram that shows data connection between solvers
   "mappingsBetweenMeshesLogFile":   "mappings_between_meshes.txt",   # log file for mappings between meshes
   "DynamicHyperelasticitySolver": {
-    "timeStepWidth":              1,      # time step width
-    "endTime":                    500,           # end time of the simulation time span
+    "timeStepWidth":              0.1,      # time step width
+    "endTime":                    20.0,           # end time of the simulation time span
     "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
     "useAnalyticJacobian":        True,                         # whether to use the analytically computed jacobian matrix in the nonlinear solver (fast)
     "useNumericJacobian":         False,                        # whether to use the numerically computed jacobian matrix in the nonlinear solver (slow), only works with non-nested matrices, if both numeric and analytic are enable, it uses the analytic for the preconditioner and the numeric as normal jacobian
 
-    "materialParameters":         [0.3, 0.7],                   # material parameters of the Mooney-Rivlin material
-    "density":                    1.0,
+    "materialParameters":         [3.176e-10, 1.813],           # material parameters of the Mooney-Rivlin material
+    "density":                    10,                           # density of the material in 10^2 kg/m^3
   
     # mesh
-    "nElements":                  [nx, ny, nz],                 # number of elements in the 2 coordinate directions  
+    "nElements":                  [mx, my, mz],                 # number of elements in the 2 coordinate directions  
     "inputMeshIsGlobal":          True,                         # if the specifiation of the mesh is given in global numbers
-    "physicalExtent":             [nx, ny, nz],                 # the physical dimensions of the mesh, in this case the same as the number of elements
+    "physicalExtent":             [mx, my, mz],                 # the physical dimensions of the mesh, in this case the same as the number of elements
     "physicalOffset":             [0, 0, 0],                    # lower left bottom coordinates of the mesh
 
     # nonlinear solver
@@ -69,12 +91,12 @@ config = {
     "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
 
     # boundary and initial conditions
-    "dirichletBoundaryConditions": dirichlet_bc,   # the initial Dirichlet boundary conditions that define values for displacements u and velocity v
-    "neumannBoundaryConditions":   neumann_bc,     # Neumann boundary conditions that define traction forces on surfaces of elements
+    "dirichletBoundaryConditions": elasticity_dirichlet_bc,   # the initial Dirichlet boundary conditions that define values for displacements u and velocity v
+    "neumannBoundaryConditions":   elasticity_neumann_bc,     # Neumann boundary conditions that define traction forces on surfaces of elements
     "divideNeumannBoundaryConditionValuesByTotalArea": True,           # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
     "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
     "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
-    "updateNeumannBoundaryConditionsFunction": None,                    # function that updates the Neumann BCs while the simulation is running
+    "updateNeumannBoundaryConditionsFunction": update_neumann_bc,                    # function that updates the Neumann BCs while the simulation is running
     "updateNeumannBoundaryConditionsFunctionCallInterval": 1,           # every which step the update function should be called, 1 means every time step
 
     "OutputWriter": [
