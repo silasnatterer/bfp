@@ -103,9 +103,9 @@ celerybeat.pid
 
 .sconsign.dblite
 .sconf_temp
-*/build_release/*
-*/build_debug/*
-*precice-Participant*
+**/build_release/**
+**/build_debug/**
+**precice-Participant**
 .vtk
 .vtu
 solver_structure.txt
