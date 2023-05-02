@@ -10,21 +10,20 @@ var_file = sys.argv[0] if ".py" in sys.argv[0] else "variables.py"
 
 # add folders to python path
 script_path = os.path.dirname(os.path.abspath(__file__))
-var_path = os.path.join(script_path, "variables")
-sys.path.insert(0, script_path)
+var_path = os.path.join(script_path, "../variables")
 sys.path.insert(0, var_path)
 
 # load variables file
-var_module, _ = os.path.splitext(var_file)
-variables = importlib.import_module(var_module, package=var_file)
+scenario_name, _ = os.path.splitext(var_file)
+variables = importlib.import_module(scenario_name, package=var_file)
 
 # define config
 config = {
-  "scenarioName":                   variables.scenario_name,
+  "scenarioName":                   scenario_name,
 
   "logFormat":                      "csv",
-  "mappingsBetweenMeshesLogFile":   "out/" + variables.scenario_name + "/mappings_between_meshes.txt",
-  "solverStructureDiagramFile":     "out/" + variables.scenario_name + "/solver_structure.txt",
+  "mappingsBetweenMeshesLogFile":   "out/" + scenario_name + "/mappings_between_meshes.txt",
+  "solverStructureDiagramFile":     "out/" + scenario_name + "/solver_structure.txt",
   
   "Meshes":                         variables.meshes,
   "MappingsBetweenMeshes": { 
@@ -108,7 +107,7 @@ config = {
                     "CellML": {
                       "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
                       "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                      "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
+                      "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
 
                       "statesInitialValues":                        [],
                       "initializeStatesToEquilibrium":              False,
@@ -150,8 +149,8 @@ config = {
                 "OutputWriter": [
                   {
                     "format":         "Paraview",
-                    "outputInterval": int(1.0 / variables.dt_splitting),
-                    "filename":       "out/" + variables.scenario_name + "/fibers",
+                    "outputInterval": int(1.0 / variables.dt_splitting * variables.output_interval),
+                    "filename":       "out/" + scenario_name + "/fibers",
                     "fileNumbering":  "incremental",
                     "binary":         True,
                     "fixedFormat":    False,
@@ -220,8 +219,8 @@ config = {
         "OutputWriter": [
           {
             "format":             "Paraview",
-            "outputInterval":     int(1.0 / variables.dt_3D),
-            "filename":           "out/" + variables.scenario_name + "/mechanics",
+            "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+            "filename":           "out/" + scenario_name + "/mechanics",
             "fileNumbering":      "incremental",
             "binary":             True,
             "fixedFormat":        False,
@@ -265,9 +264,9 @@ config = {
           "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
           "constantBodyForce":          (0, 0, 0),
 
-          "dirichletOutputFilename":    "out/" + variables.scenario_name + "/dirichlet_output",
-          "residualNormLogFilename":    "out/" + variables.scenario_name + "/residual_norm_log.txt",
-          "totalForceLogFilename":      "out/" + variables.scenario_name + "/total_force_log.txt",
+          "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output",
+          "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log.txt",
+          "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log.txt",
 
           "OutputWriter": [],
           "pressure":       { "OutputWriter": [] },

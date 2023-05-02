@@ -5,16 +5,13 @@ import numpy as np
 rank_no = int(sys.argv[-2])
 n_ranks = int(sys.argv[-1])
 
-# Scenario name
-scenario_name = "precice_contraction"
-input_dir = "../../../electrophysiology/input/"
-
 # Time stepping
 dt_3D = 1e0             # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 100.0        # end time of the simulation 
+end_time = 50.0         # end time of the simulation 
+output_interval = 1.0   # time interval between outputs
 
 # Material parameters
 pmax = 7.3                                                  # maximum active stress
@@ -72,13 +69,14 @@ for x in range(el_x):
         neumann_bc += [{
             "element": x + y*el_x + (el_z-1)*el_y*el_x, 
             "constantVector": [0, 0, neumann_force], 
-            "face": "0+"
+            "face": "2+"
         }]
 
 # Fiber activation
+input_dir = "../../../../electrophysiology/input/"
 fiber_distribution_file = input_dir + "MU_fibre_distribution_3780.txt"
 firing_times_file = input_dir + "MU_firing_times_always.txt"
-specific_states_call_enable_begin = 10.0                    # time of first fiber activation
+specific_states_call_enable_begin = 1.0                     # time of first fiber activation
 specific_states_call_frequency = 1e-3                       # frequency of fiber activation
 
 

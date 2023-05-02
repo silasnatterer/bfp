@@ -26,24 +26,15 @@
       <write-data name="Gamma" mesh="FastMonodomainMesh"/>
       <read-data  name="Geometry" mesh="FastMonodomainMesh"/>
 
-      <export:vtk directory="precice-output" every-n-time-windows="10"  />
+      <export:vtk directory="precice-output" every-n-time-windows="10"/>
 
-      <!--<mapping:rbf-gaussian 
-        direction="read" 
-        from="MuscleContractionMesh" 
-        to="FastMonodomainMesh" 
-        constraint="consistent" 
-        timing="initial" 
-        shape-parameter="91.05"
-      />-->
-      
      <mapping:rbf-compact-polynomial-c6
         direction="read" 
         from="MuscleContractionMesh" 
         to="FastMonodomainMesh" 
         constraint="consistent" 
         timing="initial" 
-        support-radius="0.5"  
+	support-radius="0.5"
      />
     </participant>
     
@@ -54,16 +45,7 @@
       <write-data name="Geometry" mesh="MuscleContractionMesh"/>
       <read-data  name="Gamma"    mesh="MuscleContractionMesh"/>
       
-      <export:vtk directory="precice-output" every-n-time-windows="10"  />
-
-      <!-- <mapping:rbf-gaussian 
-        direction="read" 
-        from="FastMonodomainMesh" 
-        to="MuscleContractionMesh" 
-        constraint="consistent" 
-        timing="initial" 
-        shape-parameter="151.74"
-      />-->
+      <export:vtk directory="precice-output" every-n-time-windows="10"/>
 
      <mapping:rbf-compact-polynomial-c6
         direction="read" 
@@ -71,7 +53,7 @@
         to="MuscleContractionMesh" 
         constraint="consistent" 
         timing="initial" 
-        support-radius="0.1"  
+	support-radius="0.5"
       />  
     </participant>
 
@@ -79,7 +61,7 @@
 
     <coupling-scheme:serial-explicit>
       <participants first="FastMonodomain" second="MuscleContraction"/>
-      <max-time value="100.0"/>           
+      <max-time value="50.0"/>           
       <time-window-size value="1e0"/>
       
       <exchange data="Gamma"    mesh="FastMonodomainMesh" from="FastMonodomain" to="MuscleContraction"/>

@@ -9,21 +9,20 @@ var_file = sys.argv[0] if ".py" in sys.argv[0] else "variables.py"
 
 # add folders to python path
 script_path = os.path.dirname(os.path.abspath(__file__))
-var_path = os.path.join(script_path, "variables")
-sys.path.insert(0, script_path)
+var_path = os.path.join(script_path, "../variables")
 sys.path.insert(0, var_path)
 
 # load variables file
-var_module, _ = os.path.splitext(var_file)
-variables = importlib.import_module(var_module, package=var_file)
+scenario_name, _ = os.path.splitext(var_file)
+variables = importlib.import_module(scenario_name, package=var_file)
 
 # define config
 config = {
-  "scenarioName":                   variables.scenario_name,
+  "scenarioName":                   scenario_name,
 
   "logFormat":                      "csv",
-  "mappingsBetweenMeshesLogFile":   "out/" + variables.scenario_name + "/fast_monodomain/mappings_between_meshes_log.txt",
-  "solverStructureDiagramFile":     "out/" + variables.scenario_name + "/fast_monodomain/solver_structure_diagram.txt",
+  "mappingsBetweenMeshesLogFile":   "out/" + scenario_name + "/fast_monodomain/mappings_between_meshes_log.txt",
+  "solverStructureDiagramFile":     "out/" + scenario_name + "/fast_monodomain/solver_structure_diagram.txt",
   
   "Meshes":                         variables.meshes,
   "MappingsBetweenMeshes":          {},
@@ -108,7 +107,7 @@ config = {
                   "CellML": {
                     "modelFilename":            variables.input_dir + "hodgkin_huxley-razumova.cellml",
                     "meshName":                 "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)),
-                    "stimulationLogFilename":   "out/" + variables.scenario_name + "/fast_monodomain/stimulation.log",
+                    "stimulationLogFilename":   "out/" + scenario_name + "/fast_monodomain/stimulation.log",
 
                     "statesInitialValues":                          [],
                     "initializeStatesToEquilibrium":                False,
@@ -150,8 +149,8 @@ config = {
               "OutputWriter": [
                 {
                   "format":         "Paraview",
-                  "outputInterval": int(1.0 / variables.dt_splitting),
-                  "filename":       "out/" + variables.scenario_name + "/fast_monodomain/fibers",
+                  "outputInterval": int(1.0 / variables.dt_splitting * variables.output_interval),
+                  "filename":       "out/" + scenario_name + "/fast_monodomain/fibers",
                   "fileNumbering":  "incremental",
                   "binary":         True,
                   "fixedFormat":    False,
