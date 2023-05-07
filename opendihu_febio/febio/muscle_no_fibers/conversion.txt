@@ -1,0 +1,37 @@
+Unit conversion:
+
+			        OpenDihu		                FEBioStudio
+time			    ms			                    s
+distance		    cm			                    m
+force			    N		        	            N
+
+mass			    dg *			                kg
+density			    dg/cm³			                kg/m³
+pressure		    N/cm²			                Pa = N/m²
+
+
+
+Parameter conversion:
+
+			        OpenDihu				        FEBioStudio
+muscle extent x:    2 cm                            0.02 m
+muscle extent y:    2 cm                            0.02 m
+muscle extent z:    6 cm                            0.06 m
+
+material density:	10 dg/cm³				        1000 kg/m³
+material c1:		3.176e-10 (dg / (cm * ms²))		3.176e-06 (kg / (m * s²))
+material c2:        1.813 (dg / (cm * ms²))			18130 (kg / (m * s²))
+
+force:			    5 N					            5 N
+
+time step size:	    0.1 ms					        0.0001 s
+end time:           20 ms                           (200 * 0.0001 s) **
+
+
+
+*	N	= (x * kg) cm / ms²
+		= (x * kg) e-02 m / e-06 s²
+	kg	= (x * kg) e+04
+	x	= e-04		==>	Unit of mass is e-04 * kg = dg
+
+**  specified 200 time steps, with 0.0001 s each
