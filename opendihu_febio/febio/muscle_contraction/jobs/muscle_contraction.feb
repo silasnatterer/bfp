@@ -3,8 +3,8 @@
 	<Module type="solid"/>
 	<Control>
 		<analysis>DYNAMIC</analysis>
-		<time_steps>200</time_steps>
-		<step_size>0.0005</step_size>
+		<time_steps>800</time_steps>
+		<step_size>0.001</step_size>
 		<plot_zero_state>0</plot_zero_state>
 		<plot_range>0,-1</plot_range>
 		<plot_level>PLOT_MAJOR_ITRS</plot_level>
@@ -68,7 +68,7 @@
 				<vector>0,0,1</vector>
 			</fiber>
 			<active_contraction>
-				<ascl>1</ascl>
+				<ascl>10</ascl>
 				<Tmax>1</Tmax>
 				<ca0>4.35</ca0>
 				<camax>4.35</camax>
