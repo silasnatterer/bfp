@@ -111,6 +111,10 @@ celerybeat.pid
 solver_structure.txt
 mappings_between_meshes_log.txt
 log_residual_norm.txt
+**/output/**
+muscle.xplt
+**.swp
+**precice-Generator**
 
 # Environments
 .env
