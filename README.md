@@ -6,6 +6,7 @@ The folder opendihu contains 4 cases:
 - fibers_only: Activation of multiple fibers without a muscle mesh using FastMonodomainSolver. 
 - muscle_contraction: Coupling of fibers and muscle using opendihu
 - precice_contracion: Coupling of fibers and muscle using precice
+- febio_contraction: Coupling of febio and opendihu
 
 The folder also contains a variables folder with some possible configurations.
 To run a case, the name of one of the configurations in this folder has to be added as a second command line argument.

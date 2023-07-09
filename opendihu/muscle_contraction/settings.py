@@ -220,7 +220,7 @@ config = {
           {
             "format":             "Paraview",
             "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-            "filename":           "out/" + scenario_name + "/mechanics",
+            "filename":           "out/" + scenario_name + "/muscle",
             "fileNumbering":      "incremental",
             "binary":             True,
             "fixedFormat":        False,

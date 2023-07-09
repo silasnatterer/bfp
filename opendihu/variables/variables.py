@@ -5,6 +5,9 @@ import numpy as np
 rank_no = int(sys.argv[-2])
 n_ranks = int(sys.argv[-1])
 
+# PreCICE
+precice_config = "../precice-config.xml"
+
 # Time stepping
 dt_3D = 1e0             # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
@@ -21,7 +24,7 @@ diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am
 
 # Meshes
 ex_x, ex_y, ex_z = 3.0, 3.0, 9.0                # extent of muscle
-el_x, el_y, el_z = 3, 3, 9                      # number of elements
+el_x, el_y, el_z = 2, 2, 6                      # number of elements
 bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
 fb_x, fb_y = 4, 4           # number of fibers
@@ -56,7 +59,7 @@ for fiber_x in range(fb_x):
             "nRanks":               n_ranks
         }
 
-# boundary conditions
+# Boundary conditions
 dirichlet_bc = {} # fix z=0 with dirichlet boundary conditions
 for x in range(bs_x):
     for y in range(bs_y):
