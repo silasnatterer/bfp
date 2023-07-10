@@ -58,12 +58,28 @@
 		</Constants>
 	</Globals>
 	<Material>
-		<material id="1" name="Material2" type="Mooney-Rivlin">
+		<material id="1" name="Material2" type="CustomMaterial">
 			<density>10</density>
 			<k>1000</k>
 			<pressure_model>default</pressure_model>
 			<c1>3.176e-10</c1>
 			<c2>1.813</c2>
+			<c3>1</c3>
+			<c4>1</c4>
+			<c5>107.5</c5>
+			<lam_max>1</lam_max>
+			<fiber type="vector">
+				<vector>0,0,1</vector>
+			</fiber>
+			<active_contraction type="CustomContraction">
+				<ascl>0</ascl>
+				<Tmax>1</Tmax>
+				<ca0>1</ca0>
+				<camax>0</camax>
+				<beta>8.900363e-308</beta>
+				<l0>0</l0>
+				<refl>0</refl>
+			</active_contraction>
 		</material>
 	</Material>
 	<Mesh>
@@ -323,17 +339,6 @@
 			<quad4 id="8">123,124,10,9</quad4>
 			<quad4 id="9">124,29,2,10</quad4>
 		</Surface>
-		<Surface name="Force1">
-			<quad4 id="1">5,20,125,55</quad4>
-			<quad4 id="2">20,19,126,125</quad4>
-			<quad4 id="3">19,6,40,126</quad4>
-			<quad4 id="4">55,125,127,56</quad4>
-			<quad4 id="5">125,126,128,127</quad4>
-			<quad4 id="6">126,40,39,128</quad4>
-			<quad4 id="7">56,127,51,8</quad4>
-			<quad4 id="8">127,128,52,51</quad4>
-			<quad4 id="9">128,39,7,52</quad4>
-		</Surface>
 	</Mesh>
 	<MeshDomains>
 		<SolidDomain name="Part1" mat="Material2"/>
@@ -345,18 +350,6 @@
 			<z_dof>1</z_dof>
 		</bc>
 	</Boundary>
-	<Loads>
-		<surface_load name="Force1" surface="Force1" type="force">
-			<scale lc="1">5</scale>
-			<force>0,0,1</force>
-			<shell_bottom>0</shell_bottom>
-		</surface_load>
-	</Loads>
-	<LoadData>
-		<load_controller id="1" name="LC1" type="math">
-			<math>t/50</math>
-		</load_controller>
-	</LoadData>
 	<Output>
 		<plotfile type="febio">
 			<var type="displacement"/>

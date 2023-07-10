@@ -23,5 +23,6 @@ FECORE_PLUGIN void PluginInitialize(FECoreKernel& fecore)
 	// register adapter callback
    	REGISTER_FECORE_CLASS(PreciceCallback, "precice_callback");
 	// register custom material
-    REGISTER_FECORE_CLASS(CustomMaterial, "CustomMaterial");
+    	REGISTER_FECORE_CLASS(CustomMaterial, "CustomMaterial");
+	REGISTER_FECORE_CLASS(CustomContraction, "CustomContraction");
 }

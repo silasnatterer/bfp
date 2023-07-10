@@ -1,41 +1,35 @@
-#include <FEBioMech/FEUncoupledMaterial.h>
+#include <FEBioMech/FEActiveFiberContraction.h>
+#include <FEBioMech/FETransIsoMooneyRivlin.h>
 #include <FEBioMech/FEElasticMaterialPoint.h>
 
-class FEBIOMECH_API CustomMaterialPoint : public FEMaterialPointData
+class FEBIOMECH_API CustomMaterialPoint : public FEElasticMaterialPoint
 {
 public:
-    CustomMaterialPoint(FEMaterialPointData *mp): FEMaterialPointData(mp)
-    {
-        m_gamma = 0.;
-    }
+    CustomMaterialPoint(FEMaterialPointData *mp = nullptr)
+	    : FEElasticMaterialPoint(mp), m_gamma(0) {}
 
     double m_gamma;
 };
 
-class CustomMaterial : public FEUncoupledMaterial
+class CustomContraction : public FEActiveFiberContraction
+{
+public:
+    CustomContraction(FEModel *pfem)
+	    : FEActiveFiberContraction(pfem) {}
+
+    mat3ds ActiveStress(FEMaterialPoint &mp, const vec3d &a0) override;
+
+    DECLARE_FECORE_CLASS();
+};
+
+class CustomMaterial : public FETransIsoMooneyRivlin
 {
 public:
 
-    CustomMaterial(FEModel* pfem);
-
-    // material parameters
-    double  m_c1;
-    double  m_c2;
-
-    // Cauchy-stress calculation
-    mat3ds DevStress(FEMaterialPoint& pt) override;
-    // Spatial elasticity tensor calculation
-    tens4ds DevTangent(FEMaterialPoint& pt) override;
-    // Deviatoric strain energy density calculation
-	double DevStrainEnergyDensity(FEMaterialPoint& mp) override;
-
-    // class initialization (optional)
-    bool Init() override;
-    // class validation (optional)
-    bool Validate() override;
+    CustomMaterial(FEModel* pfem) 
+	    : FETransIsoMooneyRivlin(pfem) {}
 
     FEMaterialPointData *CreateMaterialPointData() override;
 
-    // required macro for integrating this class with FECore
     DECLARE_FECORE_CLASS();
 };
