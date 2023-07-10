@@ -34,7 +34,7 @@
         to="FibersMesh" 
         constraint="consistent" 
         timing="initial" 
-	support-radius="0.005"
+	support-radius="0.5"
       />  
       <export:vtk directory="../precice-output" every-n-time-windows="1"/>
     </participant>
@@ -52,7 +52,7 @@
 	to="MuscleMesh"
 	constraint="consistent"
 	timing="initial"
-	support-radius="0.005"
+	support-radius="0.5"
       />
       <export:vtk directory="../precice-output" every-n-time-windows="1"/>
     </participant>
@@ -61,8 +61,8 @@
 
     <coupling-scheme:serial-explicit>
       <participants first="Fibers" second="Muscle" />
-      <time-window-size value="1e-4" />
-      <max-time value="0.02" />
+      <time-window-size value="1e0" />
+      <max-time value="50.0" />
       <exchange data="Geometry" mesh="MuscleMesh" from="Muscle" to="Fibers"/>
       <exchange data="Gamma" mesh="FibersMesh" from="Fibers" to="Muscle"/>
     </coupling-scheme:serial-explicit>

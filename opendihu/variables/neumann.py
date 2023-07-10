@@ -24,11 +24,11 @@ diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am
 
 # Meshes
 ex_x, ex_y, ex_z = 3.0, 3.0, 9.0                # extent of muscle
-el_x, el_y, el_z = 2, 2, 6                      # number of elements
+el_x, el_y, el_z = 3, 3, 9                      # number of elements
 bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
-fb_x, fb_y = 4, 4           # number of fibers
-fb_points = 40              # number of points per fiber
+fb_x, fb_y = 10, 10         # number of fibers
+fb_points = 100             # number of points per fiber
 fiber_direction = [0, 0, 1] # direction of fiber in element
 
 meshes = { # create 3D mechanics mesh

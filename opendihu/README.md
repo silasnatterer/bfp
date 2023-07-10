@@ -17,5 +17,4 @@ The following cases are provided:
 The following configuration files are provided:
 - variables.py: Default configuration file.
 - neumann.py: Similar to variables.py, but includes Neumann pulling force.
-- febio.py: Smaller muscle. Intended for the febio_contracion case.
 - mapping.py: Different results when using preCICE coupling and openDiHu coupling
