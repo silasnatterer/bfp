@@ -2,6 +2,7 @@
 
 #include <FECore/sdk.h>
 #include "PreciceCallback.h"
+#include "CustomMaterial.h"
 #include "iostream"
 
 FECORE_PLUGIN int GetSDKVersion()
@@ -19,5 +20,8 @@ FECORE_PLUGIN void GetPluginVersion(int& major, int& minor, int& patch)
 FECORE_PLUGIN void PluginInitialize(FECoreKernel& fecore)
 {
 	FECoreKernel::SetInstance(&fecore);
+	// register adapter callback
    	REGISTER_FECORE_CLASS(PreciceCallback, "precice_callback");
+	// register custom material
+    REGISTER_FECORE_CLASS(CustomMaterial, "CustomMaterial");
 }

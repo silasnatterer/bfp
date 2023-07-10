@@ -1,7 +1,9 @@
 #include "PreciceCallback.h"
+#include "CustomMaterial.h"
 #include <FECore/log.h>
 #include <FECore/FEMaterialPoint.h>
 #include <FECore/FETimeStepController.h>
+#include <FEBioMech/FEElasticMaterialPoint.h>
 
 // Get number of materialpoints and their initial position
 std::pair<int, vector<double>> PreciceCallback::getRelevantMaterialPoints(FEModel *fem, const std::string &elementName) {
@@ -128,7 +130,14 @@ void PreciceCallback::ReadData(FEModel *fem) {
     	    	    	FEElement &element = elementSet->Element(i);
     	    	    	for (int j = 0; j < element.GaussPoints(); j++) {
     	    	    	    	FEMaterialPoint *materialPoint = element.GetMaterialPoint(j);
-    	    	    	    	// TODO materialPoint->gamma = data[counter]
+
+								auto elastic = materialPoint->ExtractData<CustomMaterialPoint>();
+								if (elastic == nullptr) {
+    	    						throw FEException("MaterialPoint is not an instance of CustomMaterialPoint");
+								}
+
+								elastic->m_gamma = data[counter];
+
     	    	    	    	counter++;
     	    	    	}
     	    	}
