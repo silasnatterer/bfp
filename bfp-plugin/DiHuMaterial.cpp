@@ -44,9 +44,9 @@ mat3ds DiHuContraction::ActiveStress(FEMaterialPoint &mp, const vec3d &a0) {
 
 	// Calculate active stress using OpenDiHus formula
 	double lam_opt = 1.2; // constant in OpenDiHu 
-	double arg = lam/lam_opt;
+	double arg = lamd/lam_opt;
 	double f = -(25/4)*arg*arg + (25/2)*arg - 5.25;
-	double saf = (1/lam) * m_pmax * f * pt.m_gamma;
+	double saf = (1/lamd) * m_pmax * f * pt.m_gamma;
 
 	return AxA*saf;
 }
