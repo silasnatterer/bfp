@@ -1,5 +1,8 @@
 # BFP Plugin for FEBio 
 
+This plugin enables the coupling of a simple muscle simulation using OpenDiHu and FEBio via preCICE.
+The preCICE coupling code is based on [an existing preCICE adapter for FEBio](https://github.com/precice/febio-adapter)
+
 ## Installation
 The following dependencies are required:
 - [preCICE](https://precice.org/installation-overview.html)
@@ -52,6 +55,7 @@ Note that the following names are hardcoded in the plugin:
 - "MuscleMesh": name of the preCICE mesh
 - "Gamma", "Geometry": name of the preCICE fields to couple
 - "MusclePart": name of the FEBio part to couple 
+
 By default the adapter will use "../precice-config.xml" for the preCICE config.
 To change this, set the "BFP_CONFIG" environment variable.
 You can then run the case with
