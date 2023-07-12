@@ -24,7 +24,7 @@ diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am
 
 # Meshes
 ex_x, ex_y, ex_z = 3.0, 3.0, 12.0               # extent of muscle
-el_x, el_y, el_z = 3, 3, 12                     # number of elements
+el_x, el_y, el_z = 3, 3, 6                      # number of elements
 bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
 fb_x, fb_y = 10, 10         # number of fibers

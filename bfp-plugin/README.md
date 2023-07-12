@@ -10,25 +10,25 @@ The following dependencies are required:
 
 For the adapter to link against the FEBio SKD successfully you have to perform the following steps:
 - Include the SDK when installing FEBio
-- Copy FEBioStudio/lib to FEBioStudio/sdk/lib
+- Copy *FEBioStudio/lib* to *FEBioStudio/sdk/lib*
 - Clone the [FEBio git repository](https://github.com/febiosoftware/FEBio) (branch febio4)
-- Copy the folders FEAMR, FEBio3, FEBioLib, FEBioOpt, FEBioPlot, FEBioRVE, FEBioTest, FEBioXML, FEImgLib, NumCore and XML from the repository to FEBioStudio/sdk/include
-- Set the path in build.sh to your FEBio installation path
+- Copy the folders *FEAMR, FEBio3, FEBioLib, FEBioOpt, FEBioPlot, FEBioRVE, FEBioTest, FEBioXML, FEImgLib, NumCore* and *XML* from the repository to *FEBioStudio/sdk/include*
+- Set the path in *build.sh* to your FEBio installation path
 
-You should then be able to compile the plugin by running the build.sh script.
-Then you have to add the following lines to your FEBioStudio/bin/febio.xml:
+You should then be able to compile the plugin with CMake or by running the *build.sh* script.
+Then you have to add the following lines to your *FEBioStudio/bin/febio.xml*:
 ```xml
 <import>pathToAdapter/build/lib/libBFPPlugin.so</import>
 ```
 
 ## Usage
-For the PreCICE coupling to work you have to add the following lines to your model.feb file 
+For the PreCICE coupling to work you have to add the following lines to your *model.feb* file 
 ```xml
 <Code>
 	<callback name="precice_callback"\>
 </Code>
 ```
-In addition you have to change the Material to the custom DiHuMaterial
+In addition you have to change the Material to use the custom *DiHuMaterial* and *DiHuContraction* classes
 ```xml
 <Material>
 	<material id="1" name="Material1" type="DiHuMaterial">
@@ -51,15 +51,15 @@ In addition you have to change the Material to the custom DiHuMaterial
 </Material>
 ```
 Note that the following names are hardcoded in the plugin:
-- "Muscle": name of the preCICE participant 
-- "MuscleMesh": name of the preCICE mesh
-- "Gamma", "Geometry": name of the preCICE fields to couple
-- "MusclePart": name of the FEBio part to couple 
+- *Muscle*: name of the preCICE participant 
+- *MuscleMesh*: name of the preCICE mesh
+- *Gamma*, "Geometry": name of the preCICE fields to couple
+- *MusclePart*: name of the FEBio part to couple 
 
-By default the adapter will use "../precice-config.xml" for the preCICE config.
-To change this, set the "BFP_CONFIG" environment variable.
+By default the adapter will use *../precice-config.xml* for the preCICE config.
+To change this, set the *BFP_CONFIG* environment variable.
 You can then run the case with
 ```bash
-mpirun -n 1 FEBioStudio/bin/febio4 model.feb
+BFP_CONFIG="config" mpirun -n 1 FEBioStudio/bin/febio4 model.feb
 ```
 

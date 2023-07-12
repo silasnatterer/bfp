@@ -6,10 +6,10 @@ rank_no = int(sys.argv[-2])
 n_ranks = int(sys.argv[-1])
 
 # PreCICE
-precice_config = "../precice-config-1ms.xml"
+precice_config = "../precice-config-10ms.xml"
 
 # Time stepping
-dt_3D = 1e0             # time step of 3D mechanics
+dt_3D = 10.0            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
@@ -24,7 +24,7 @@ diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am
 
 # Meshes
 ex_x, ex_y, ex_z = 3.0, 3.0, 12.0               # extent of muscle
-el_x, el_y, el_z = 3, 3, 12                     # number of elements
+el_x, el_y, el_z = 3, 3, 24                     # number of elements
 bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
 fb_x, fb_y = 10, 10         # number of fibers
