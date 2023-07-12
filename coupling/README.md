@@ -28,16 +28,16 @@ The mesh is fixed to the z=0 plane using Dirichlet boundary conditions.
 The simulation runs for 30ms. 
 
 ### neumann.py
-The same as variables.py, but includes Neumann pulling force in z direction.
-Supposed to be used with the muscle_only case.
+The same as *variables.py*, but includes Neumann pulling force in z direction.
+Supposed to be used with the *muscle_only* case.
 
 ### mapping.py
-Similar to variables.py, but with only a 4x4 fiber resolution.
+Similar to *variables.py*, but with a 4x4 fiber resolution.
 With this case the internal OpenDiHu mapping method does not work properly.
-This means that the results of precice_contraction and muscle_contraction will differ significantly.
+This means that the results of *precice_contraction* and *muscle_contraction* will differ significantly.
 
 ### case_zN_Tms.py
-Similar to variables.py, but uses N elements in z direction and a timestep width of T ms instead.
+Similar to *variables.py*, but uses N elements in z direction and a timestep width of T ms instead.
 This can be used to compare the results at different resolutions.
 
 ## Running the FEBio cases
@@ -53,5 +53,5 @@ The cases *muscle_zN_Tms.feb* are supposed to be used with the corresponding *ca
 BFP_CONFIG="../precice-config-Tms.py" ./run.sh muscle_zN_Tms.feb
 ./fibers ../settings_fibers.py case_zN_Tms.py
 ```
-Note that you need to set the *BFP_CONFIG* environment variable if you want the preCICE adapter to use the correct config.
+Note that you need to set the *BFP_CONFIG* environment variable if you want the preCICE adapter to use the correct configuration.
 
