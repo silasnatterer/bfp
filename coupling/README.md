@@ -50,7 +50,7 @@ The case *muscle.feb* is supposed to be used with the default *variables.py* fil
 ```
 The cases *muscle_zN_Tms.feb* are supposed to be used with the corresponding *case_zN_Tms.py*:
 ```bash
-BFP_CONFIG="../precice-config-Tms.py" ./run.sh muscle_zN_Tms.feb
+BFP_CONFIG="../precice-config-Tms.xml" ./run.sh muscle_zN_Tms.feb
 ./fibers ../settings_fibers.py case_zN_Tms.py
 ```
 Note that you need to set the *BFP_CONFIG* environment variable if you want the preCICE adapter to use the correct configuration.

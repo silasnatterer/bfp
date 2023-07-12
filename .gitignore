@@ -108,6 +108,7 @@ celerybeat.pid
 **precice-Participant**
 **precice-output**
 **precice-run**
+.xplt
 .vtk
 .vtu
 solver_structure.txt
