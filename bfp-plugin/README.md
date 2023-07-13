@@ -31,7 +31,7 @@ For the PreCICE coupling to work you have to add the following lines to your *mo
 In addition you have to change the material to use the custom *DiHuMaterial* and *DiHuContraction* classes
 ```xml
 <Material>
-	<material id="1" name="Material1" type="DiHuMaterial">
+	<material id="material_id" name="material_name" type="DiHuMaterial">
 		<density>OpenDiHu density</density>
 		<k>1000</k>
 		<pressure_model>default</pressure_model>
