@@ -46,8 +46,8 @@ In addition you have to change the material to use the custom *DiHuMaterial* and
 		</fiber>
 		<active_contraction type="DiHuContraction">
 			<pmax>OpenDiHu Pmax</pmax>
-			<lam_opt> 1.2 </lam_opt>
-			<enable_force_length_relation> 1 </enable_force_length_relation>
+			<lam_opt>1.2</lam_opt>
+			<enable_force_length_relation>1</enable_force_length_relation>
 		</active_contraction>
 	</material>
 </Material>
