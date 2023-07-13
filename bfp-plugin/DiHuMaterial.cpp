@@ -1,14 +1,6 @@
 #include "DiHuMaterial.h"
 
 BEGIN_FECORE_CLASS(DiHuMaterial, FETransIsoMooneyRivlin)
-	ADD_PARAMETER(m_c1, "c1");
-	ADD_PARAMETER(m_c2, "c2");
-	ADD_PARAMETER(m_fib.m_c3, "c3");
-	ADD_PARAMETER(m_fib.m_c4, "c4");
-	ADD_PARAMETER(m_fib.m_c5, "c5");
-	ADD_PARAMETER(m_fib.m_lam1, "lam_max");
-	ADD_PROPERTY(m_fiber, "fiber")->SetDefaultType("vector");
-	ADD_PROPERTY(m_ac, "active_contraction", FEProperty::Optional);
 END_FECORE_CLASS();
 
 // Create DiHuMaterialPoint instead of FEElasticMaterialPoint
@@ -49,9 +41,9 @@ mat3ds DiHuContraction::ActiveStress(FEMaterialPoint &mp, const vec3d &a0) {
 	double f = 1.0;
 	if (m_enableForceLengthRelation
  	    && 0.6 <= lamRelative && lamRelative <= 1.4) {
-		-25.0/4.0 * lamRelative*lamRelative + 25.0/2.0 * lamRelative - 5.25;
+		f = -25.0/4.0 * lamRelative*lamRelative + 25.0/2.0 * lamRelative - 5.25;
 	}
-	double saf = (1.0/lamd) * m_pmax * f * pt.m_gamma;
+	double saf = 1.0/lamd * m_pmax * f * pt.m_gamma;
 
 	return AxA*saf;
 }
