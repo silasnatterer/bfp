@@ -82,6 +82,8 @@
 			</fiber>
 			<active_contraction type="DiHuContraction">
 				<pmax>7.3</pmax>
+				<lam_opt>1.2</lam_opt>
+				<enable_force_length_relation>1</enable_force_length_relation>
 			</active_contraction>
 		</material>
 	</Material>

@@ -14,7 +14,7 @@ public:
     	DiHuMaterialPoint(FEMaterialPointData *mp = nullptr)
     	        : FEElasticMaterialPoint(mp), m_gamma(0) {}
 
-    	double m_gamma;
+    	double m_gamma; // coupling vatiable
 };
 
 /*
@@ -45,12 +45,15 @@ class DiHuContraction
 	: public FEActiveContractionMaterial
 {
 public:
-    DiHuContraction(FEModel *pfem)
-	    : FEActiveContractionMaterial(pfem) {}
+    	DiHuContraction(FEModel *pfem)
+    	        : FEActiveContractionMaterial(pfem) {}
 
-    virtual mat3ds ActiveStress(FEMaterialPoint &mp, const vec3d &a0) override;
-    virtual tens4ds ActiveStiffness(FEMaterialPoint &mp, const vec3d &a0) override;
+    	virtual mat3ds ActiveStress(FEMaterialPoint &mp, const vec3d &a0) override;
+    	virtual tens4ds ActiveStiffness(FEMaterialPoint &mp, const vec3d &a0) override;
 
-    double m_pmax; // maximum active stress
-    DECLARE_FECORE_CLASS();
+    	double m_pmax; 				// maximum PK2 active stress
+	double m_lamOpt; 			// 1.2 constant in OpenDiHu
+	bool m_enableForceLengthRelation; 	// whether f(lam/lam_opt) should be multiplied
+ 
+    	DECLARE_FECORE_CLASS();
 };

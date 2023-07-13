@@ -20,6 +20,8 @@ FEMaterialPointData *DiHuMaterial::CreateMaterialPointData() {
 
 BEGIN_FECORE_CLASS(DiHuContraction, FEActiveContractionMaterial)
 	ADD_PARAMETER(m_pmax, "pmax");
+	ADD_PARAMETER(m_lamOpt, "lam_opt");
+	ADD_PARAMETER(m_enableForceLengthRelation, "enable_force_length_relation");
 END_FECORE_CLASS();
 
 // Uses OpenDiHus active stress calculation
@@ -43,10 +45,13 @@ mat3ds DiHuContraction::ActiveStress(FEMaterialPoint &mp, const vec3d &a0) {
 	mat3ds AxA = dyad(a);
 
 	// Calculate active stress using OpenDiHus formula
-	double lam_opt = 1.2; // constant in OpenDiHu 
-	double arg = lamd/lam_opt;
-	double f = -(25/4)*arg*arg + (25/2)*arg - 5.25;
-	double saf = (1/lamd) * m_pmax * f * pt.m_gamma;
+	double lamRelative = lamd/m_lamOpt;
+	double f = 1.0;
+	if (m_enableForceLengthRelation
+ 	    && 0.6 <= lamRelative && lamRelative <= 1.4) {
+		-25.0/4.0 * lamRelative*lamRelative + 25.0/2.0 * lamRelative - 5.25;
+	}
+	double saf = (1.0/lamd) * m_pmax * f * pt.m_gamma;
 
 	return AxA*saf;
 }
