@@ -44,7 +44,7 @@ config = {
     "preciceParticipantName":       "Fibers",
     "couplingEnabled":              True,
     "timeStepOutputInterval":       100,
-    "timestepWidth":                1,
+    "timestepWidth":                variables.dt_3D,
     "scalingFactor":                1,
     "outputOnlyConvergedTimeSteps": True,
 

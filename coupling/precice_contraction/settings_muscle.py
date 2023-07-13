@@ -50,7 +50,7 @@ config = {
     "preciceParticipantName":       "Muscle",
     "couplingEnabled":              True,
     "timeStepOutputInterval":       100,
-    "timestepWidth":                1,
+    "timestepWidth":                variables.dt_3D,
     "scalingFactor":                1,
     "outputOnlyConvergedTimeSteps": True,
 
@@ -100,7 +100,7 @@ config = {
       "DynamicHyperelasticitySolver": { 
         "durationLogKey":         "duration_3D",
         "logTimeStepWidthAsKey":  "dt_3D",
-        "timeStepWidth":          variables.dt_3D,
+        "numberTimeSteps":        1,
         "materialParameters":     variables.material_parameters,
         "density":                variables.rho,
         "timeStepOutputInterval": 1,

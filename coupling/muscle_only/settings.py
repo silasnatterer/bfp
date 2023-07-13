@@ -80,7 +80,7 @@ config = {
       "DynamicHyperelasticitySolver": {
         "durationLogKey":         "duration_3D",
         "logTimeStepWidthAsKey":  "dt_3D",
-        "timeStepWidth":          variables.dt_3D,
+        "numberTimeSteps":        1,
         "materialParameters":     variables.material_parameters,
         "density":                variables.rho,
         "timeStepOutputInterval": 1,
