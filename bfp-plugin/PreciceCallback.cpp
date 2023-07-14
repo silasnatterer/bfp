@@ -34,7 +34,7 @@ void PreciceCallback::Init(FEModel *fem) {
 	// Get config path from envrironment
 	const char *config = getenv("BFP_CONFIG");
 	if (!config) {
-		config = "../precice-config.xml";
+		config = "./precice-config.xml";
 	}
 
     	// initialize precice

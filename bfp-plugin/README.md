@@ -20,6 +20,7 @@ Then you have to add the following lines to your *FEBioStudio/bin/febio.xml*:
 ```xml
 <import>pathToAdapter/build/lib/libBFPPlugin.so</import>
 ```
+You can also load the plugin in FEBioStudio under *FEBio->Manage FEBio Plugins*.
 
 ## Usage
 For the PreCICE coupling to work you have to add the following lines to your *model.feb* file 
@@ -58,7 +59,7 @@ Note that the following names are hardcoded in the plugin:
 - *Gamma*, *Geometry*: name of the preCICE fields to couple
 - *MusclePart*: name of the FEBio part to couple 
 
-By default the adapter will use *../precice-config.xml* for the preCICE configuration path.
+By default the adapter will use *./precice-config.xml* for the preCICE configuration path.
 To change this, set the *BFP_CONFIG* environment variable.
 You can then run the case with
 ```bash

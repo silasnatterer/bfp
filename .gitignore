@@ -109,8 +109,8 @@ celerybeat.pid
 **precice-output**
 **precice-run**
 **.xplt
-.vtk
-.vtu
+**.vtk
+**.vtu
 solver_structure.txt
 mappings_between_meshes_log.txt
 log_residual_norm.txt
