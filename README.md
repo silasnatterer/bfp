@@ -13,7 +13,12 @@ To run a case, the name of one of the configurations in this folder has to be ad
 If no second argument is provided, the configuration "variables.py" is used by default.
 For example, "./muscle_only ../settings.py neumann.py" runs the muscle mechanics with a neumann pulling force on one end.
 Note that all the cases use the same set of configuration files.
-Instead of changing one of the existing configuration files, it should be preferred to copy it and modify the copy instead. 
+Instead of changing one of the existing configuration files, it should be preferred to copy it and modify the copy instead.
+
+## comparison opendihu and febio
+In the folder "comparison_opendihu_febio/", two FEBio cases and one OpenDiHu case can be found that all model the same problem case.
+To run either of the the FEBio cases, either open them in FEBioStudio, or run them directly with an febio4 executable.
+The OpenDiHu case can be executed from "build_release" with the following command: "./muscle_no_fibers ../settings.py".
 
 ## opendihu and febio cases
 The folder opendihu_febio contains two cases for comparison between opendihu and FEBioStudio:
