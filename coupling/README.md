@@ -43,14 +43,10 @@ This can be used to compare the results at different resolutions.
 ## Running the FEBio cases
 The FEBio cases are located in *febio_contraction/muscle*.
 You can change the *run.sh* to point to your FEBio4 executable.
-The case *muscle.feb* is supposed to be used with the default *variables.py* file on the OpenDiHu side:
+The case *muscle.feb* is supposed to be used with the default *variables.py* file on the OpenDiHu side,
+and the cases *muscle_zN_Tms.feb* are supposed to be used with the corresponding *case_zN_Tms.py*:
 ```bash
-./run.sh muscle.feb
-./fibers ../settings_fibers.py
-```
-The cases *muscle_zN_Tms.feb* are supposed to be used with the corresponding *case_zN_Tms.py*:
-```bash
-BFP_CONFIG="../precice-config-Tms.xml" ./run.sh muscle_zN_Tms.feb
+BFP_CONFIG="../../variables/precice-config-Tms.xml" ./run.sh muscle_zN_Tms.feb
 ./fibers ../settings_fibers.py case_zN_Tms.py
 ```
 Note that you need to set the *BFP_CONFIG* environment variable if you want the preCICE adapter to use the correct configuration.
