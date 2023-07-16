@@ -1,6 +1,6 @@
 # Bachelor-Forschungsprojekt: Comparison and coupling of the neuromuscular simulation software OpenDiHu with the biomechanics solver FEBio
 
-This is the repository for the Bachelor-Forschungsprojekt of Paul Arlt, Luis Morgenstern, Silas Natterer and Jan Stein. It encompasses all the code and documentation related to our research project on modeling skeletal muscles using the FEBio and OpenDiHu simulation frameworks.
+This is the repository for the Bachelor-Forschungsprojekt of Paul Arlt, Luis Morgenstern, Silas Natterer and Jan Stein. It encompasses all the code and documentation related to our research project on modeling skeletal muscles using the FEBio and OpenDiHu simulation frameworks. For a more detailed description of the project and its results read our [report](report.pdf).
 
 We've organized the repository into several folders, each representing a distinct aspect of our project:
 

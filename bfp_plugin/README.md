@@ -36,11 +36,11 @@ In addition you have to change the material to use the custom *DiHuMaterial* and
 		<density>OpenDiHu density</density>
 		<k>1000</k>
 		<pressure_model>default</pressure_model>
-		<c1>OpenDiHu c1 (1st MaterialParameter)</c1>
-		<c2>OpenDiHu c2 (2nd Material Parameter)</c2>
+		<c1>OpenDiHu c1</c1>
+		<c2>OpenDiHu c2</c2>
 		<c3>0</c3>
 		<c4>1</c4>
-		<c5>OpenDiHu d (4th Material Parameter)</c5>
+		<c5>OpenDiHu b</c5>
 		<lam_max>1</lam_max>
 		<fiber type="vector">
 			<vector>Direction of fiber</vector>
