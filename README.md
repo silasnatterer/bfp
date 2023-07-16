@@ -9,5 +9,3 @@ We've organized the repository into several folders, each representing a distinc
 - [comparison_opendihu_febio](comparison_opendihu_febio): This folder encompasses the simulation cases associated with the comparative analysis of the mechanical simulation capabilities between OpenDiHu and FEBio.
 
 - [active_contraction_cases](active_contraction_cases): This folder is dedicated to the simulation of active fiber contractions in OpenDiHu with and without preCICE. This also contains the main result of our project: A hybrid simulation, combining the mechanical solver of FEBio with the fast monodomain solver of OpenDiHu.
-
-- [python_scripts](python_scripts): This folder includes helper scripts assisting in the visualization and comparison of the results.
