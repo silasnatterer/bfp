@@ -43,7 +43,7 @@ In addition you have to change the material to use the custom *DiHuMaterial* and
 		<c5>OpenDiHu b</c5>
 		<lam_max>1</lam_max>
 		<fiber type="vector">
-			<vector>Direction of fiber</vector>
+			<vector>Direction of fibers</vector>
 		</fiber>
 		<active_contraction type="DiHuContraction">
 			<pmax>OpenDiHu Pmax</pmax>
