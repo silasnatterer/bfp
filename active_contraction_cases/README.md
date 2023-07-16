@@ -4,11 +4,11 @@ This folder contains the final muscle contraction cases.
 
 ## Cases
 The following cases are provided:
-- *muscle_only*: A muscle without any fibers solved using OpenDiHus MuscleContractionSolver.
-- *fibers_only*: Activation of multiple fibers solved using OpenDiHus FastMonodomainSolver.
-- *muscle_contraction*: Full muscle simulation with OpenDiHu using OpenDiHus internal coupling.
-- *precice_contraction*: Full muscle simulation with OpenDiHu using external preCICE coupling.
-- *febio_contraction*: Couples FEBios mechanics solver with OpenDiHus FastMonodomain solver using the preCICE adapter.
+- [muscle_only](muscle_only): A muscle without any fibers solved using OpenDiHus MuscleContractionSolver.
+- [fibers_only](fibers_only): Activation of multiple fibers solved using OpenDiHus FastMonodomainSolver.
+- [muscle_contraction](muscle_contraction): Full muscle simulation with OpenDiHu using OpenDiHus internal coupling.
+- [precice_contraction](precice_contraction): Full muscle simulation with OpenDiHu using external preCICE coupling.
+- [febio_contraction](febio_contraction): Couples FEBios mechanics solver with OpenDiHus FastMonodomain solver using the preCICE adapter.
 
 ## Running the OpenDiHu cases
 To run an OpenDiHu case, you first have to compile it using
